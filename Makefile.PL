@@ -5,7 +5,7 @@ use warnings;
 
 use ExtUtils::MakeMaker 6.48; # MIN_PERL_VERSION
 
-my $module       = 'BRIANG::Dist::Perfect';
+my $module       = 'Mock::rand';
 my $min_perl     = '5.14.0'; # s///r modifier
 
 my $path_to_main = "lib/$module.pm" =~ s|::|/|gr; # lib/BRIANG/Dist/Perfect.pm
@@ -30,8 +30,7 @@ my %WriteMakefileArgs = (
     },
 
     TEST_REQUIRES      => { # needed to run `make test` or `prove -l`
-        'Test::Exception' => 0,
-        'Test::More'      => '0.22',
+        'Test2::V0'      => '0',
     },
 
     PREREQ_PM => { # needed to `use` the module
