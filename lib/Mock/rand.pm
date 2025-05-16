@@ -34,6 +34,8 @@ use constant {
 };
 
 my $period = 1024;
+my $seed;
+my @rands;
 
 sub import {
     croak 'List of key-value pairs expected' unless @_ & 1;
@@ -63,17 +65,17 @@ sub import {
 
     *{"${target}::rand"} =
         ($type eq 'ordered' ? *ordered_rand : *unordered_rand);
+    $seed = 0;
+    @rands = ();
 }
 
 sub ordered_rand :prototype(;$) {
-    state $_seed = 0;
-    $_seed %= $period;
-    return $_seed++ / $period * ($_[0] || 1);
+    # state $_seed = 0;
+    $seed %= $period;
+    return $seed++ / $period * ($_[0] || 1);
 };
 
 sub unordered_rand :prototype(;$) {
-    state @rands;
-
     if (@rands == 0) {
         @rands =
             sort { rand() <=> 0.5 } # shuffle!
