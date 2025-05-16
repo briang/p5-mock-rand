@@ -4,27 +4,14 @@ use v5.26; # signatures
 
 use Test2::V0 -no_srand => 1;
 
-BEGIN {
-    if ($ENV{INSIDE_EMACS}) {
-        eval {
-            use FindBin;
-            use lib "$FindBin::Bin/../lib";
-        };
-    }
-}
+BEGIN { eval qq(use lib "../lib") if $ENV{INSIDE_EMACS} }
 
-use Data::Dump; # FIXME
+use Mock::rand period => 4;
 
-# { no warnings 'redefine'; sub Test2::API::test2_stdout { open my $f, '>', '/dev/null'; $f } }
-################################################################################
-subtest synopsis => sub {
-    use Mock::rand period => 4;
-
-    is rand(), 0.00, "rand returns 0/4";
-    is rand(), 0.25, "rand returns 1/4";
-    is rand(), 0.50, "rand returns 2/4";
-    is rand(), 0.75, "rand returns 3/4";
-    is rand(), 0.00, "rand returns 0/4";
-};
+is rand(), 0.00, "rand returns 0/4";
+is rand(), 0.25, "rand returns 1/4";
+is rand(), 0.50, "rand returns 2/4";
+is rand(), 0.75, "rand returns 3/4";
+is rand(), 0.00, "rand returns 0/4";
 
 done_testing; say 'done_testing';
