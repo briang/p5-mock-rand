@@ -36,13 +36,14 @@ use constant {
 my $period = 1024;
 
 sub import {
-    my ($package, $opts) = @_;
+    croak 'List of key-value pairs expected' unless @_ & 1;
+    my ($package, %opts) = @_;
 
     my $target;
     my $type = ORDERED;
 
-    for my $k ( keys %$opts ) {
-        my $v = %$opts{$k};
+    for my $k ( keys %opts ) {
+        my $v = $opts{$k};
 
         if    ($k eq 'target') { $target = $v }
         elsif ($k eq 'period') { $period = $v }
