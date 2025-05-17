@@ -50,27 +50,23 @@ sub import {
         if    ($k eq 'target') { $target = $v }
         elsif ($k eq 'period') { $period = $v }
         elsif ($k eq 'type') {
-            croak sprintf '"type" must have a value of "%s" or "%s"', ORDERED, UNORDERED
+            croak sprintf q("type" must be "%s" or "%s"), ORDERED, UNORDERED
                 unless $v eq ORDERED or $v eq UNORDERED;
             $type = $v;
         }
-        else {
-            croak "unknown key \"$k\"";
-        }
+        else { croak qq(unknown key "$k") }
     }
 
     $target = caller unless defined $target;
 
-    no strict "refs";
-
-    *{"${target}::rand"} =
-        ($type eq 'ordered' ? *ordered_rand : *unordered_rand);
+    {   no strict "refs";
+        *{"${target}::rand"} =
+            ($type eq 'ordered' ? *ordered_rand : *unordered_rand)   }
     $seed = 0;
     @rands = ();
 }
 
 sub ordered_rand :prototype(;$) {
-    # state $_seed = 0;
     $seed %= $period;
     return $seed++ / $period * ($_[0] || 1);
 };
@@ -79,7 +75,6 @@ sub unordered_rand :prototype(;$) {
     if (@rands == 0) {
         @rands =
             sort { rand() <=> 0.5 } # shuffle!
-            # map  { ordered_rand($_[0]) } 1 .. $period;
             map  { &ordered_rand } 1 .. $period;
     }
     return pop @rands;
